@@ -99,13 +99,6 @@ void DIANBIAO_Hex2Float(uint8_t *srcbuf, float *dstbuf){
     }
 }
 
-void ELECFLOW_Hex2Float(uint8_t *srcbuf, float *dstbuf){
-
-}
-
-void ELECFLOW_Hex2Double(uint8_t *srcbuf, double *dstbuf){
-
-}
 
 void *Modbus_Server(void *arg)
 {
@@ -258,34 +251,44 @@ void *IPv6_Client(void *arg) {
     }
 }
 
+typedef union _FLOAT2HEX {
+	float f;
+	uint16_t u16[2]; 
+}FLOAT2HEX;
 
 int Parse_IPv6_Resp(uint8_t *buf, int len)
 {
+    FLOAT2HEX temp_float;
+		
     if(buf[0] == 0xA1 && buf[1] == 0xA2 && buf[2] == 0x00 && buf[3] == 0xAA && buf[4] > 0 && buf[4] <=10)
     {
 
         if(Get_Data_Type(buf) == CO && len == CO_PACKET_LEN)
         {
             printf("get node%d CO data:%d\n", buf[4], (buf[7]<<8)+buf[8]);
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
+            //UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+            //UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+            temp_float.f= (float)((buf[7]<<8)+buf[8]) / 100;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD ] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = temp_float.u16[1];   //data
             Opcua_Server_Parse(buf);
         }
         if(Get_Data_Type(buf) == DUST && len == DUST_PACKET_LEN)
         {
             printf("get node%d DUST data:%d\n", buf[4], (buf[7]<<8)+buf[8]);
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+            temp_float.f= (float)((buf[7]<<8)+buf[8]) / 100;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD ] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = temp_float.u16[1];   //data
             Opcua_Server_Parse(buf);
         }
         if(Get_Data_Type(buf) == LIAOWEI && len == LIAOWEI_PACKET_LEN)
         {
             printf("get node%d LIAOWEI data:%d\n", buf[4], (buf[7]<<8)+buf[8]);
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
             Opcua_Server_Parse(buf);
         }
         if(Get_Data_Type(buf) == DIANBIAO && len == DIANBIAO_PACKET_LEN)
@@ -321,29 +324,38 @@ int Parse_IPv6_Resp(uint8_t *buf, int len)
         if(Get_Data_Type(buf) == DISPLACE && len == DISPLACE_PACKET_LEN)
         {
             printf("get node%d DISPLACE data:%d\n", buf[4], (buf[7]<<8)+buf[8]);
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+            temp_float.f= (float)((buf[7]<<8)+buf[8]) / 100;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD ] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = temp_float.u16[1];   //data
             Opcua_Server_Parse(buf);
         }
         if(Get_Data_Type(buf) == HUMITURE && len == HUMITURE_PACKET_LEN)
         {
             printf("get node%d temp data:%d, moisture data:%d\n", buf[4], (buf[7]<<8)+buf[8], (buf[9]<<8)+buf[10]);
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 3] = (uint16_t)((buf[9]<<8)+buf[10]);
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+            temp_float.f= (float)((buf[7]<<8)+buf[8]) / 100;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD ] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = temp_float.u16[1];   //data
+            //UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
+            temp_float.f= (float)((buf[9]<<8)+buf[10]) / 100;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 3] = temp_float.u16[1];   //data
             Opcua_Server_Parse(buf);
         }
         if(Get_Data_Type(buf) == WIND && len == WIND_PACKET_LEN)
         {
             printf("get node%d WIND data:%d\n", buf[4], (buf[7]<<8)+buf[8]);
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
-            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2] = (uint16_t)((buf[7]<<8)+buf[8]);   //data
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+//            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+            temp_float.f= (float)((buf[7]<<8)+buf[8]) / 1000;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD ] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = temp_float.u16[1];   //data
             Opcua_Server_Parse(buf);
         }
-        if(Get_Data_Type(buf) == ELEC_FLOW && len == ELEC_FLOW_PACKET_LEN)
+        if(Get_Data_Type(buf) == FLOW_METER && len == ELEC_FLOW_PACKET_LEN)
         {
             uint64_t temp1 = buf[7]<<56|buf[8]<<48|buf[9]<<40|buf[10]<<32|buf[11]<<24|buf[12]<<16|buf[13]<<8|buf[14];
             uint64_t temp2 = buf[15]<<56|buf[16]<<48|buf[17]<<40|buf[18]<<32|buf[19]<<24|buf[20]<<16|buf[21]<<8|buf[22];
@@ -355,6 +367,28 @@ int Parse_IPv6_Resp(uint8_t *buf, int len)
             for(int i=0; i<5; i++){
                 UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 2 + i] = (uint16_t)((buf[7+i*2]<<8)+buf[8+i*2]);   //data
             }
+            Opcua_Server_Parse(buf);
+        }
+
+        if(Get_Data_Type(buf) == SO2 && len == SO2_PACKET_LEN)
+        {
+            printf("get node%d SO2 data:%d\n", buf[4], (buf[7]<<8)+buf[8]);
+            //UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+            //UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+            temp_float.f= (float)((buf[7]<<8)+buf[8]) / 100;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD ] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = temp_float.u16[1];   //data
+            Opcua_Server_Parse(buf);
+        }
+
+        if(Get_Data_Type(buf) == TEMP && len == TEMP_PACKET_LEN)
+        {
+            printf("get node%d TEMP data:%d\n", buf[4], (buf[7]<<8)+buf[8]);
+            //UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD] = (uint16_t)buf[4];                     //addr
+            //UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = (uint16_t)(buf[5]);               //type
+            temp_float.f= (float)((buf[7]<<8)+buf[8]) / 100;
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD ] = temp_float.u16[0];   //data
+            UT_INPUT_REGISTERS_TAB[REGISTER_WRITE_HEAD + 1] = temp_float.u16[1];   //data
             Opcua_Server_Parse(buf);
         }
     }
@@ -371,10 +405,6 @@ uint8_t Get_Data_Type(uint8_t *data)
 }
 
 
-void NodeIntoArray()     //add the node to the nodearray
-{
-
-}
 
 void  Opcua_Server_Parse(UA_Byte *opcuabuf)
 {
@@ -606,11 +636,11 @@ void  Opcua_Server_Parse(UA_Byte *opcuabuf)
         memset(nodeName,'\0',strlen(nodeName));
 
     }
-    else if(opcuabuf[5] == ELEC_FLOW){
-        strcat(nodeName,"ELEC_FLOW_");
-        p = strstr(nodeName,"ELEC_FLOW_");
+    else if(opcuabuf[5] == FLOW_METER){
+        strcat(nodeName,"FLOW_METER_");
+        p = strstr(nodeName,"FLOW_METER_");
         if(p != NULL)
-            sprintf(p,"ELEC_FLOW_%d",opcuabuf[4]);
+            sprintf(p,"FLOW_METER_%d",opcuabuf[4]);
         strcat(nodeName,"_ZK");
         nodeName[strlen(nodeName)] = '\0';
         nodeId = UA_NODEID_STRING(1, nodeName);
@@ -623,10 +653,10 @@ void  Opcua_Server_Parse(UA_Byte *opcuabuf)
             Change_Server_DoubleValue(server, nodeId,DoubleNodeData);
         memset(nodeName,'\0',strlen(nodeName));
 
-        strcat(nodeName,"ELEC_FLOW_");
-        p = strstr(nodeName,"ELEC_FLOW_");
+        strcat(nodeName,"FLOW_METER_");
+        p = strstr(nodeName,"FLOW_METER_");
         if(p != NULL)
-            sprintf(p,"ELEC_FLOW_%d",opcuabuf[4]);
+            sprintf(p,"FLOW_METER_%d",opcuabuf[4]);
         strcat(nodeName,"_DK");
         nodeName[strlen(nodeName)] = '\0';
         nodeId = UA_NODEID_STRING(1, nodeName);
@@ -639,10 +669,10 @@ void  Opcua_Server_Parse(UA_Byte *opcuabuf)
             Change_Server_DoubleValue(server, nodeId,DoubleNodeData);
         memset(nodeName,'\0',strlen(nodeName));
 
-        strcat(nodeName,"ELEC_FLOW_");
-        p = strstr(nodeName,"ELEC_FLOW_");
+        strcat(nodeName,"FLOW_METER");
+        p = strstr(nodeName,"FLOW_METER_");
         if(p != NULL)
-            sprintf(p,"ELEC_FLOW_%d",opcuabuf[4]);
+            sprintf(p,"FLOW_METER%d",opcuabuf[4]);
         strcat(nodeName,"_BK");
         nodeName[strlen(nodeName)] = '\0';
         nodeId = UA_NODEID_STRING(1, nodeName);
@@ -654,6 +684,37 @@ void  Opcua_Server_Parse(UA_Byte *opcuabuf)
             Change_Server_FloatValue(server, nodeId,FloatNodeData);
         memset(nodeName,'\0',strlen(nodeName));
     }
+    else if(opcuabuf[5] == SO2){
+        strcat(nodeName,"SO2_");
+        p = strstr(nodeName,"SO2_");
+        if(p != NULL)
+            sprintf(p,"SO2_%d",opcuabuf[4]);
+        nodeName[strlen(nodeName)] = '\0';
+        nodeId = UA_NODEID_STRING(1, nodeName);
+        UinNodeData =  (UA_UInt16)((opcuabuf[7]<<8)+opcuabuf[8]);
+        result = Get_Node_Fromaddresspace(server, &nodeId);
+        if(!result)
+            AddUintNode(nodeName);
+        else
+            Change_Server_IntValue(server, nodeId,UinNodeData);
+        memset(nodeName,'\0',strlen(nodeName));
+    }
+    else if(opcuabuf[5] == TEMP){
+        strcat(nodeName,"TEMP_");
+        p = strstr(nodeName,"TEMP_");
+        if(p != NULL)
+            sprintf(p,"TEMP_%d",opcuabuf[4]);
+        nodeName[strlen(nodeName)] = '\0';
+        nodeId = UA_NODEID_STRING(1, nodeName);
+        UinNodeData =  (UA_UInt16)((opcuabuf[7]<<8)+opcuabuf[8]);
+        result = Get_Node_Fromaddresspace(server, &nodeId);
+        if(!result)
+            AddUintNode(nodeName);
+        else
+            Change_Server_IntValue(server, nodeId,UinNodeData);
+        memset(nodeName,'\0',strlen(nodeName));
+    }
+
 }
 
 UA_UInt16 stringNodeIdToTpye(const UA_NodeId nodeId)

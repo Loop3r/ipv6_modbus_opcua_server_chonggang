@@ -2,8 +2,8 @@
 // Created by champer on 27/04/17.
 //
 
-#ifndef MODBUS_SERVER_SOCKET_H
-#define MODBUS_SERVER_SOCKET_H
+#ifndef SOCKET_H
+#define SOCKET_H
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -41,7 +41,9 @@
 #define DISPLACE   0x07  //位移
 #define HUMITURE   0x08  //温湿度
 #define WIND       0x09  //风速
-#define ELEC_FLOW  0x0A  //电磁流量计
+#define FLOW_METER  0x0A  //流量仪表
+#define SO2        0x0B  //二氧化硫
+#define TEMP       0x0C  //温变
 
 #define CO_PACKET_LEN         9
 #define DUST_PACKET_LEN       9
@@ -53,13 +55,15 @@
 #define HUMITURE_PACKET_LEN   11
 #define WIND_PACKET_LEN       9
 #define ELEC_FLOW_PACKET_LEN  27
+#define SO2_PACKET_LEN        9
+#define TEMP_PACKET_LEN       9
 
 
 #define NB_CONNECTION        5
 #define IPV6_RESP_LEN        100
 
-#define REGISTER_WRITE_HEAD   ((buf[4]-1)*20)
-
+//#define REGISTER_WRITE_HEAD   ((buf[4]-1)*20)
+#define REGISTER_WRITE_HEAD   ((buf[4]-1)*4)
 
 void close_sigint(int dummy);
 void swap(uint8_t *a, uint8_t *b);
